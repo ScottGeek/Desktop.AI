@@ -46,25 +46,27 @@ on:
 jobs:
 
   build:
-
-    strategy:
+   runs-on: ${{ matrix.os }}
+   strategy:
       matrix:
-        configuration: [Debug, Release]
+        configuration: [Release]
+        os: [ubuntu-latest, macos-latest, windows-latest]
+   env:
+      Solution_Name: src/Desktop.AI.app/Desktop.AI.app.sln                         # Replace with your solution name, i.e. MyWpfApp.sln.
+      Wap_Project_Directory: src/Desktop.AI.app/Desktop.AI.app                     # Replace with the Wap project directory relative to the solution, i.e. MyWpfApp.Package.
+      Wap_Project_Path: src/Desktop.AI.app/Desktop.AI.app/Desktop.AI.app.csproj    # Replace with the path to your Wap project, i.e. MyWpf.App.Package\MyWpfApp.Package.wapproj.
 
-    runs-on: windows-latest  # For a list of available runner types, refer to
-                             # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
-
-    env:
-      Solution_Name: src/Desktop.AI.app/Desktop.AI.app.sln                                            # Replace with your solution name, i.e. MyWpfApp.sln.
-      Test_Project_Path: src\Desktop.AI.app\Desktop.AI.app\Desktop.AI.app.csproj   # Replace with the path to your test project, i.e. MyWpfApp.Tests\MyWpfApp.Tests.csproj.
-      Wap_Project_Directory: src\Desktop.AI.app\Desktop.AI.app                     # Replace with the Wap project directory relative to the solution, i.e. MyWpfApp.Package.
-      Wap_Project_Path: src\Desktop.AI.app\Desktop.AI.app\Desktop.AI.app.csproj    # Replace with the path to your Wap project, i.e. MyWpf.App.Package\MyWpfApp.Package.wapproj.
-
-    steps:
+   steps:
     - name: Checkout
       uses: actions/checkout@v3
       with:
         fetch-depth: 0
+  
+    # Install the .net core electron
+    - name: Install .net 5 for Electron
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 5.0.x
 
     # Install the .NET Core workload
     - name: Install .NET Core
@@ -73,27 +75,37 @@ jobs:
         dotnet-version: 6.0.x
 
     # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
-    - name: Setup MSBuild.exe
-      uses: microsoft/setup-msbuild@v1.0.2
-    
-    # Restore app
-    - name: Restore the application
-      run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration
-      env:
-        Configuration: ${{ matrix.configuration }}
-        
+    #- name: Setup MSBuild.exe
+    #  uses: microsoft/setup-msbuild@v1.0.2
+       
     # Build
     - name: Build
-      run: dotnet build src\Desktop.AI.app\Desktop.AI.app.sln --configuration Release
+      run: dotnet build src/Desktop.AI.app/Desktop.AI.app.sln --configuration Release
       
-    - name: Build
+    - name: Restore Tools
+      run: dotnet tool restore
+      working-directory: src/Desktop.AI.app/Desktop.AI.app
+      
+    - name: Build Electron Windows
+      if: matrix-os == 'windows-latest'
       run: dotnet electronize build /target win
-      
-    #Upload something
-    #- name: Upload build artifacts
-    #  uses: actions/upload-artifacts@v3
-    #  with:
-    #     name: MSIX Package
-    #     path: src/Desktop.AI.app
+      working-directory: src/Desktop.AI.app/Desktop.AI.app
         
-
+    - name: Build Electron Macos
+      if: matrix-os == 'macos-latest'
+      run: dotnet electronize build /target osx
+      working-directory: src/Desktop.AI.app/Desktop.AI.app
+      
+    - name: Build Electron Linux (ubuntu)
+      if: matrix-os == 'ubuntu-latest'
+      run: dotnet electronize build /target linux
+      working-directory: src/Desktop.AI.app/Desktop.AI.app
+      
+    - name: Upload build artifacts Windows
+      if: matrix-os == 'windows-latest'
+      uses: actions/upload-artifacts@v3
+      with:
+        name: Windows Package
+        path: src/Desktop.AI.app/Desktop.AI.app/bin/desktop/*.exe
+        
+      
