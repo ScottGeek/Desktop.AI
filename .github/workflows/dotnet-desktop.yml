@@ -55,14 +55,10 @@ jobs:
                              # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
 
     env:
-      Solution_Name: src/Desktop.AI.app/Desktop.AI.app.sln                             
-         # Replace with your solution name, i.e. MyWpfApp.sln.
-      Test_Project_Path: src/Desktop.AI.app/Desktop.AI.app/Desktop.AI.app.csproj                 
-         # Replace with the path to your test project, i.e. MyWpfApp.Tests\MyWpfApp.Tests.csproj.
-      Wap_Project_Directory: src/Desktop.AI.app/Desktop.AI.app    
-         # Replace with the Wap project directory relative to the solution, i.e. MyWpfApp.Package.
-      Wap_Project_Path: src/Desktop.AI.app/Desktop.AI.app/Desktop.AI.app.csproj                   
-         # Replace with the path to your Wap project, i.e. MyWpf.App.Package\MyWpfApp.Package.wapproj.
+      Solution_Name: Desktop.AI.app.sln                                            # Replace with your solution name, i.e. MyWpfApp.sln.
+      Test_Project_Path: src\Desktop.AI.app\Desktop.AI.app\Desktop.AI.app.csproj   # Replace with the path to your test project, i.e. MyWpfApp.Tests\MyWpfApp.Tests.csproj.
+      Wap_Project_Directory: src\Desktop.AI.app\Desktop.AI.app                     # Replace with the Wap project directory relative to the solution, i.e. MyWpfApp.Package.
+      Wap_Project_Path: src\Desktop.AI.app\Desktop.AI.app\Desktop.AI.app.csproj    # Replace with the path to your Wap project, i.e. MyWpf.App.Package\MyWpfApp.Package.wapproj.
 
     steps:
     - name: Checkout
@@ -88,16 +84,16 @@ jobs:
         
     # Build
     - name: Build
-      run: dotnet build src\Desktop.AI.app\Desktop.AI.app.sln
+      run: dotnet build src\Desktop.AI.app\Desktop.AI.app.sln --configuration Release
       
     - name: Build
       run: dotnet electronize build /target win
       
     #Upload something
-    #- name: Upload build artifacts
-    #  uses: actions/upload-artifacts@v3
-    #  with:
-    #    name: MSIX Package
-    #    path: ${{ env.Wap_Project_Directory }}\AppPackages
+    - name: Upload build artifacts
+      uses: actions/upload-artifacts@v3
+      with:
+         name: MSIX Package
+         path: ${{ env.Wap_Project_Directory }}\AppPackages
         
 
