@@ -99,11 +99,11 @@ jobs:
       run: dotnet electronize build /target linux
       working-directory: src/Desktop.AI.app/Desktop.AI.app
       
-    - name: Upload build artifacts Windows
-      if: matrix.os == 'windows-latest'
-      uses: actions/upload-artifacts@v3
-      with:
-        name: Windows Package
-        path: src/Desktop.AI.app/Desktop.AI.app/bin/desktop/*.exe
+    #- name: Upload build artifacts Windows
+    #  if: matrix.os == 'windows-latest'
+    #  uses: actions/upload-artifacts@v3
+    #  with:
+    #    name: Windows Package
+    #    path: src/Desktop.AI.app/Desktop.AI.app/bin/desktop/*.exe
         
     
