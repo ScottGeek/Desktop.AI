@@ -86,25 +86,25 @@ jobs:
       working-directory: src/Desktop.AI.app/Desktop.AI.app
       
     - name: Build Electron Windows
-      if: matrix-os == 'windows-latest'
+      if: matrix.os == 'windows-latest'
       run: dotnet electronize build /target win
       working-directory: src/Desktop.AI.app/Desktop.AI.app
         
     - name: Build Electron Macos
-      if: matrix-os == 'macos-latest'
+      if: matrix.os == 'macos-latest'
       run: dotnet electronize build /target osx
       working-directory: src/Desktop.AI.app/Desktop.AI.app
       
     - name: Build Electron Linux (ubuntu)
-      if: matrix-os == 'ubuntu-latest'
+      if: matrix.os == 'ubuntu-latest'
       run: dotnet electronize build /target linux
       working-directory: src/Desktop.AI.app/Desktop.AI.app
       
     - name: Upload build artifacts Windows
-      if: matrix-os == 'windows-latest'
+      if: matrix.os == 'windows-latest'
       uses: actions/upload-artifacts@v3
       with:
         name: Windows Package
         path: src/Desktop.AI.app/Desktop.AI.app/bin/desktop/*.exe
         
-      
+    
