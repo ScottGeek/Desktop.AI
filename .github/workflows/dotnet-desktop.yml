@@ -100,9 +100,9 @@ jobs:
       working-directory: src/Desktop.AI.app/Desktop.AI.app
     
     - name: Upload build artifacts Windows
-      if: matrix.os == 'windows-latest'
-      uses: actions/upload-artifacts@v3
-      with:
+      uses: action/upload-artifacts@v3
+      with: 
+        if: matrix.os = 'windows-latest;
         name: Windows-Release
         path: src\Desktop.AI.app\Desktop.AI.app\obj\desktop\win\bin\*.*
         
