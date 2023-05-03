@@ -103,6 +103,6 @@ jobs:
       uses: action/upload-artifacts@v3
       with: 
         name: Windows-Release
-        path: src\Desktop.AI.app\Desktop.AI.app\obj\desktop\win\bin\*.*
+    #    path: src\Desktop.AI.app\Desktop.AI.app\obj\desktop\win\bin\*.*
         
     
